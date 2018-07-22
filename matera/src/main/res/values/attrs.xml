@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="MateraView">
+
+        <attr name="elementSizes" format="enum">
+            <enum name="undersized" value="-1" />
+            <enum name="normal" value="0" />
+            <enum name="oversized" value="1" />
+        </attr>
+
+        <attr name="numberOfLayers" format="integer" />
+        <attr name="dropShadowSize" format="integer" />
+        <attr name="elementColor" format="color" />
+        <attr name="inverseColors" format="boolean" />
+        <attr name="shadeOfColor" format="integer" />
+
+    </declare-styleable>
+</resources>

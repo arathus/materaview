@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">MateraExample</string>
+    <string name="login_page">Login page</string>
+    <string name="dialog_page">Dialog</string>
+    <string name="navigation_drawer_page">Navigation Drawer</string>
+    <string name="sign_up">Sign up</string>
+    <string name="password">Password</string>
+    <string name="e_mail">E-mail</string>
+    <string name="name">Name</string>
+</resources>
