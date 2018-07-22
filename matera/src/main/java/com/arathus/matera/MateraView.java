@@ -1,6 +1,5 @@
 package com.arathus.matera;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -31,18 +30,26 @@ public class MateraView extends View {
     public static final int UNDERSIZED = -1;
     public static final int NORMAL = 0;
     public static final int OVERSIZED = 1;
+
     private int size;
     private int numberOfLayers;
     private int dropShadowRadius;
+
     private Paint paint;
-    private String color = "#388E3C";
+    private String color;
     private boolean inverse;
     private int colorshade;
+    private ArrayList<Integer> colorPalette;
+
+    private Point a, b, c;
     private ArrayList<Path> paths;
+    private Path path;
     private ArrayList<Integer> x_points;
     private ArrayList<Integer> y_points;
+
     private int TOP_LEFT = 0, TOP_RIGHT = 1, BOTTOM_RIGHT = 2, BOTTOM_LEFT = 3;
     private ArrayList<Integer> cornerOrder;
+
 
     public MateraView(Context context) {
         super(context);
@@ -51,26 +58,40 @@ public class MateraView extends View {
     public MateraView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
+        TypedArray at = context.obtainStyledAttributes(attrs,
+                R.styleable.MateraView, 0, 0);
+
+        size = at.getInt(R.styleable.MateraView_elementSizes, 0);
+        numberOfLayers = at.getInt(R.styleable.MateraView_numberOfLayers, 2);
+        dropShadowRadius = at.getInt(R.styleable.MateraView_dropShadowSize, 8);
+        color = String.format("#%06X", (0xFFFFFF & at.getColor(R.styleable.MateraView_elementColor, Color.parseColor("#388E3C"))));
+        inverse = at.getBoolean(R.styleable.MateraView_inverseColors, false);
+        colorshade = at.getInt(R.styleable.MateraView_shadeOfColor, 5);
+        at.recycle();
+
         x_points = new ArrayList<>();
         y_points = new ArrayList<>();
-        paths = new ArrayList<>();
+
         cornerOrder = new ArrayList<>();
         cornerOrder.add(TOP_LEFT);
         cornerOrder.add(TOP_RIGHT);
         cornerOrder.add(BOTTOM_RIGHT);
         cornerOrder.add(BOTTOM_LEFT);
+
+        paths = new ArrayList<>();
+        path = new Path();
+
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paint.setShadowLayer(dropShadowRadius, 0, 0, Color.BLACK);
+        paint.setColor(Color.WHITE);
+        paint.setStyle(Paint.Style.FILL);
+        setLayerType(LAYER_TYPE_SOFTWARE, paint);
 
-        TypedArray a = context.obtainStyledAttributes(attrs,
-                R.styleable.MateraView, 0, 0);
+        a = new Point();
+        b = new Point();
+        c = new Point();
 
-        size = a.getInt(R.styleable.MateraView_elementSizes, 0);
-        numberOfLayers = a.getInt(R.styleable.MateraView_numberOfLayers, 2);
-        dropShadowRadius = a.getInt(R.styleable.MateraView_dropShadowSize, 8);
-        color = String.format("#%06X", (0xFFFFFF & a.getColor(R.styleable.MateraView_elementColor, Color.parseColor("#388E3C"))));
-        inverse = a.getBoolean(R.styleable.MateraView_inverseColors, false);
-        colorshade = a.getInt(R.styleable.MateraView_shadeOfColor, 5);
-        a.recycle();
+        colorPalette = (inverse ? getInverseColorPalette(color) : getColorPalette(color));
     }
 
     public MateraView(Context context, AttributeSet attrs, int defStyle) {
@@ -90,7 +111,6 @@ public class MateraView extends View {
         return rand.nextInt((max - min) + 1) + min;
     }
 
-    @SuppressLint("DrawAllocation")
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
@@ -106,6 +126,10 @@ public class MateraView extends View {
         int max_width_value = 0;
         int min_height_value = 0;
         int max_heigth_value = 0;
+
+        //TODO FELESLEGES RÉSZEKET EGYBEÁGYAZNI!!!
+        //TODO RÉSZFOLYAMATOKAT KISZERVEZNI KÜLÖN FÜGGVÉNYBE!!!
+
 
         //Check if there is more than one layers
         if (numberOfLayers > 0) {
@@ -133,7 +157,7 @@ public class MateraView extends View {
                             break;
 
                         case 1/*OVERSIZED*/:
-                            min_width_value = Math.round((width / 5) * 3);
+                           min_width_value = Math.round((width / 5) * 3);
                             max_width_value = Math.round(width);
                             min_height_value = Math.round((height / 5) * 3);
                             max_heigth_value = Math.round(height);
@@ -154,33 +178,32 @@ public class MateraView extends View {
                 for (int i = 0; i < numberOfLayers; i++) {
 
                     int act_corn_position = cornerOrder.indexOf(act_corn);
-                    Path path = new Path();
 
-                    Point a, b, c;
+                    Path path = new Path();
                     switch (act_corn) {
 
                         case 0:
-                            a = new Point(0, 0);
-                            b = new Point(x_points.get(((act_corn_position * numberOfLayers) + i)), 0);
-                            c = new Point(0, y_points.get(((act_corn_position * numberOfLayers) + i)));
+                            a.set(0, 0);
+                            b.set(x_points.get(((act_corn_position * numberOfLayers) + i)), 0);
+                            c.set(0, y_points.get(((act_corn_position * numberOfLayers) + i)));
                             break;
 
                         case 1:
-                            a = new Point(width, 0);
-                            b = new Point(width - x_points.get(((act_corn_position * numberOfLayers) + i)), 0);
-                            c = new Point(width, y_points.get(((act_corn_position * numberOfLayers) + i)));
+                            a.set(width, 0);
+                            b.set(width - x_points.get(((act_corn_position * numberOfLayers) + i)), 0);
+                            c.set(width, y_points.get(((act_corn_position * numberOfLayers) + i)));
                             break;
 
                         case 2:
-                            a = new Point(width, height);
-                            b = new Point(width - x_points.get(((act_corn_position * numberOfLayers) + i) - 1), height);
-                            c = new Point(width, height - y_points.get(((act_corn_position * numberOfLayers) + i) - 1));
+                            a.set(width, height);
+                            b.set(width - x_points.get(((act_corn_position * numberOfLayers) + i) - 1), height);
+                            c.set(width, height - y_points.get(((act_corn_position * numberOfLayers) + i) - 1));
                             break;
 
                         default:
-                            a = new Point(0, height);
-                            b = new Point(x_points.get(((act_corn_position * numberOfLayers) + i)), height);
-                            c = new Point(0, height - y_points.get(((act_corn_position * numberOfLayers) + i)));
+                            a.set(0, height);
+                            b.set(x_points.get(((act_corn_position * numberOfLayers) + i)), height);
+                            c.set(0, height - y_points.get(((act_corn_position * numberOfLayers) + i)));
                             break;
 
                     }
@@ -201,18 +224,13 @@ public class MateraView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        ArrayList<Integer> colorPalette = (inverse ? getInverseColorPalette(color) : getColorPalette(color));
         canvas.drawColor(colorPalette.get(0));
-
-        paint.setShadowLayer(dropShadowRadius, 0, 0, Color.BLACK);
-        paint.setColor(Color.WHITE);
-        paint.setStyle(Paint.Style.FILL);
-        setLayerType(LAYER_TYPE_SOFTWARE, paint);
 
         for (Path p : paths) {
             paint.setColor(colorPalette.get((paths.indexOf(p) % numberOfLayers) + 1));
             canvas.drawPath(p, paint);
         }
+
     }
 
     /**
