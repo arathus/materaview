@@ -1,19 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     tools:context="com.arathus.materaexample.LoginPage">
 
 
     <com.arathus.matera.MateraView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:dropShadowSize="5"
-        app:elementColor="@color/colorPrimaryDark"
-        app:numberOfLayers="3"
-        app:shadeOfColor="5" />
+        android:layout_height="match_parent" />
+
 
     <LinearLayout
         android:layout_width="fill_parent"
@@ -22,13 +19,22 @@
         android:orientation="vertical"
         android:paddingLeft="20dp"
         android:paddingRight="20dp"
-        android:paddingTop="60dp">
+        android:paddingTop="80dp">
+
+        <ImageView
+            android:id="@+id/logo_img"
+            android:layout_width="175dp"
+            android:layout_height="175dp"
+            android:layout_gravity="center"
+            android:contentDescription="@string/looks_cool"
+            android:paddingBottom="20dp"
+            android:src="@drawable/matera" />
 
         <android.support.design.widget.TextInputLayout
             android:id="@+id/input_layout_name"
+            style="@style/TextLabel"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/TextLabel">
+            android:layout_height="wrap_content">
 
             <EditText
                 android:id="@+id/input_name"
@@ -42,9 +48,9 @@
 
         <android.support.design.widget.TextInputLayout
             android:id="@+id/input_layout_email"
+            style="@style/TextLabel"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/TextLabel">
+            android:layout_height="wrap_content">
 
             <EditText
                 android:id="@+id/input_email"
@@ -57,9 +63,9 @@
 
         <android.support.design.widget.TextInputLayout
             android:id="@+id/input_layout_password"
+            style="@style/TextLabel"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="@style/TextLabel">
+            android:layout_height="wrap_content">
 
             <EditText
                 android:id="@+id/input_password"

@@ -13,7 +13,10 @@
         <attr name="dropShadowSize" format="integer" />
         <attr name="elementColor" format="color" />
         <attr name="inverseColors" format="boolean" />
+        <attr name="blackFilter" format="boolean" />
+        <attr name="filterValue" format="integer" />
         <attr name="shadeOfColor" format="integer" />
+
 
     </declare-styleable>
 </resources>

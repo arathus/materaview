@@ -6,25 +6,28 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.Point;
-import android.support.annotation.IntDef;
 import android.util.AttributeSet;
 import android.view.View;
 
+import com.arathus.matera.elements.CornerElement;
 import com.shopgun.android.materialcolorcreator.MaterialColorImpl;
 import com.shopgun.android.materialcolorcreator.Shade;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
+
+import static com.arathus.matera.elements.CornerElement.BOTTOM_LEFT;
+import static com.arathus.matera.elements.CornerElement.BOTTOM_RIGHT;
+import static com.arathus.matera.elements.CornerElement.TOP_LEFT;
+import static com.arathus.matera.elements.CornerElement.TOP_RIGHT;
 
 /**
  * Created by arathus on 2018.07.06..
  */
 
 public class MateraView extends View {
+
 
     // Declare the constants
     public static final int UNDERSIZED = -1;
@@ -38,16 +41,13 @@ public class MateraView extends View {
     private Paint paint;
     private String color;
     private boolean inverse;
+
     private int colorshade;
+    private boolean blackfilter;
+    private int filtervalue;
     private ArrayList<Integer> colorPalette;
 
-    private Point a, b, c;
-    private ArrayList<Path> paths;
-    private Path path;
-    private ArrayList<Integer> x_points;
-    private ArrayList<Integer> y_points;
-
-    private int TOP_LEFT = 0, TOP_RIGHT = 1, BOTTOM_RIGHT = 2, BOTTOM_LEFT = 3;
+    private ArrayList<CornerElement> elements;
     private ArrayList<Integer> cornerOrder;
 
 
@@ -67,10 +67,12 @@ public class MateraView extends View {
         color = String.format("#%06X", (0xFFFFFF & at.getColor(R.styleable.MateraView_elementColor, Color.parseColor("#388E3C"))));
         inverse = at.getBoolean(R.styleable.MateraView_inverseColors, false);
         colorshade = at.getInt(R.styleable.MateraView_shadeOfColor, 5);
+        blackfilter = at.getBoolean(R.styleable.MateraView_blackFilter, false);
+        filtervalue = at.getInt(R.styleable.MateraView_filterValue, 0);
+
         at.recycle();
 
-        x_points = new ArrayList<>();
-        y_points = new ArrayList<>();
+        elements = new ArrayList<>();
 
         cornerOrder = new ArrayList<>();
         cornerOrder.add(TOP_LEFT);
@@ -78,25 +80,25 @@ public class MateraView extends View {
         cornerOrder.add(BOTTOM_RIGHT);
         cornerOrder.add(BOTTOM_LEFT);
 
-        paths = new ArrayList<>();
-        path = new Path();
-
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         paint.setShadowLayer(dropShadowRadius, 0, 0, Color.BLACK);
         paint.setColor(Color.WHITE);
         paint.setStyle(Paint.Style.FILL);
         setLayerType(LAYER_TYPE_SOFTWARE, paint);
 
-        a = new Point();
-        b = new Point();
-        c = new Point();
-
         colorPalette = (inverse ? getInverseColorPalette(color) : getColorPalette(color));
+
+        if (dropShadowRadius < 0) {
+            dropShadowRadius = 0;
+        }
+
+        if (numberOfLayers < 0) {
+            numberOfLayers = 0;
+        }
     }
 
     public MateraView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-
     }
 
     /**
@@ -115,106 +117,51 @@ public class MateraView extends View {
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
 
-        int width = getMeasuredWidth();
-        int height = getMeasuredHeight();
 
-        if (dropShadowRadius < 0) {
-            dropShadowRadius = 0;
-        }
+        //Generate the values of the the triangle corners
+        generateValues(getMeasuredWidth(), getMeasuredHeight());
+    }
+
+    private void generateValues(int viewWidth, int viewHeight) {
 
         int min_width_value = 0;
         int max_width_value = 0;
         int min_height_value = 0;
         int max_heigth_value = 0;
 
-        //TODO FELESLEGES RÉSZEKET EGYBEÁGYAZNI!!!
-        //TODO RÉSZFOLYAMATOKAT KISZERVEZNI KÜLÖN FÜGGVÉNYBE!!!
+        for (Integer act_corn : cornerOrder) {
+            CornerElement actual = new CornerElement(act_corn);
+            for (int i = 0; i < numberOfLayers; i++) {
 
+                switch (size) {
 
-        //Check if there is more than one layers
-        if (numberOfLayers > 0) {
+                    case -1/*UNDERSIZED*/:
+                        min_width_value = Math.round(viewWidth / 7);
+                        max_width_value = Math.round((viewWidth / 5) * 2);
+                        min_height_value = Math.round(viewHeight / 7);
+                        max_heigth_value = Math.round((viewHeight / 5) * 2);
+                        break;
 
-            //Generate the values of the the triangle corners
-            for (Integer act_corn : cornerOrder) {
+                    case 0/*NORMAL*/:
+                        min_width_value = Math.round(viewWidth / 4);
+                        max_width_value = Math.round((viewWidth / 3) * 2);
+                        min_height_value = Math.round(viewHeight / 4);
+                        max_heigth_value = Math.round((viewHeight / 3) * 2);
+                        break;
 
-                for (int i = 0; i < numberOfLayers; i++) {
-
-                    switch (size) {
-
-                        //TODO aránytalanul rajzolja ki az egyes rétegeket
-                        case -1/*UNDERSIZED*/:
-                            min_width_value = Math.round(width / 7);
-                            max_width_value = Math.round((width / 5) * 2);
-                            min_height_value = Math.round(height / 7);
-                            max_heigth_value = Math.round((height / 5) * 2);
-                            break;
-
-                        case 0/*NORMAL*/:
-                            min_width_value = Math.round(width / 4);
-                            max_width_value = Math.round((width / 3) * 2);
-                            min_height_value = Math.round(height / 4);
-                            max_heigth_value = Math.round((height / 3) * 2);
-                            break;
-
-                        case 1/*OVERSIZED*/:
-                           min_width_value = Math.round((width / 5) * 3);
-                            max_width_value = Math.round(width);
-                            min_height_value = Math.round((height / 5) * 3);
-                            max_heigth_value = Math.round(height);
-                            break;
-                    }
-
-                    //TODO meg kell oldani, hogy az egyes generált rétegek értékei ne legyenek drasztikusan hasonlók (?!) Magyarán ne legyen két réteg egymástól miliméter távolságra, mert gagyin néz ki
-
-                    x_points.add(randInt(min_width_value, max_width_value));
-                    y_points.add(randInt(min_height_value, max_heigth_value));
-
+                    case 1/*OVERSIZED*/:
+                        min_width_value = Math.round((viewWidth / 5) * 3);
+                        max_width_value = Math.round(viewWidth);
+                        min_height_value = Math.round((viewHeight / 5) * 3);
+                        max_heigth_value = Math.round(viewHeight);
+                        break;
                 }
+
+                actual.addX(randInt(min_width_value, max_width_value));
+                actual.addY(randInt(min_height_value, max_heigth_value));
             }
-
-            //Generate every layer, to every corner. The ordering is according to the cornerOrder
-            for (Integer act_corn : cornerOrder) {
-
-                for (int i = 0; i < numberOfLayers; i++) {
-
-                    int act_corn_position = cornerOrder.indexOf(act_corn);
-
-                    Path path = new Path();
-                    switch (act_corn) {
-
-                        case 0:
-                            a.set(0, 0);
-                            b.set(x_points.get(((act_corn_position * numberOfLayers) + i)), 0);
-                            c.set(0, y_points.get(((act_corn_position * numberOfLayers) + i)));
-                            break;
-
-                        case 1:
-                            a.set(width, 0);
-                            b.set(width - x_points.get(((act_corn_position * numberOfLayers) + i)), 0);
-                            c.set(width, y_points.get(((act_corn_position * numberOfLayers) + i)));
-                            break;
-
-                        case 2:
-                            a.set(width, height);
-                            b.set(width - x_points.get(((act_corn_position * numberOfLayers) + i) - 1), height);
-                            c.set(width, height - y_points.get(((act_corn_position * numberOfLayers) + i) - 1));
-                            break;
-
-                        default:
-                            a.set(0, height);
-                            b.set(x_points.get(((act_corn_position * numberOfLayers) + i)), height);
-                            c.set(0, height - y_points.get(((act_corn_position * numberOfLayers) + i)));
-                            break;
-
-                    }
-                    path.setFillType(Path.FillType.EVEN_ODD);
-                    path.moveTo(a.x, a.y);
-                    path.lineTo(b.x, b.y);
-                    path.lineTo(c.x, c.y);
-                    path.close();
-                    paths.add(path);
-                }
-            }
+            actual.finalizeCornerElement(viewWidth, viewHeight);
+            elements.add(actual);
         }
 
 
@@ -226,25 +173,18 @@ public class MateraView extends View {
 
         canvas.drawColor(colorPalette.get(0));
 
-        for (Path p : paths) {
-            paint.setColor(colorPalette.get((paths.indexOf(p) % numberOfLayers) + 1));
-            canvas.drawPath(p, paint);
+        for (CornerElement ce : elements) {
+            for (Path p : ce.getPaths()) {
+                paint.setColor(colorPalette.get(ce.getPaths().indexOf(p) + 1));
+                canvas.drawPath(p, paint);
+            }
         }
 
+        int value = blackfilter ? 0 : 255;
+        canvas.drawColor(Color.argb(filtervalue, value, value, value));
+
     }
 
-    /**
-     * Set the size of the material textures
-     *
-     * @param size Can be one of the @{@link LayerSizes}
-     *             UNDERSIZED - the textures are smaller than the sizes of the view
-     *             NORMAL     - the textures may be as big as the view
-     *             OVERSIZED  - the textures could be bigger than the view
-     */
-
-    public void setSize(@LayerSizes int size) {
-        this.size = size;
-    }
 
     /**
      * Generate a darker-lighter color palette to a given color.
@@ -281,10 +221,26 @@ public class MateraView extends View {
         return cp;
     }
 
+    /*
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({UNDERSIZED, NORMAL, OVERSIZED})
     @interface LayerSizes {
     }
+
+    *//**
+     * Set the size of the material textures. Default value is NORMAL.
+     *
+     * @param size Can be one of the @{@link LayerSizes}
+     *             UNDERSIZED - the textures are smaller than the sizes of the view
+     *             NORMAL     - the textures may be as big as the view
+     *             OVERSIZED  - the textures could be bigger than the view
+     *//*
+
+    public void setSize(@LayerSizes int size) {
+        this.size = size;
+        this.invalidate();
+    }*/
+
 
 }
 
