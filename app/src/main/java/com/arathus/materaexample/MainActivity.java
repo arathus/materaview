@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.arathus.matera.MateraView;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -20,6 +22,11 @@ public class MainActivity extends AppCompatActivity {
             w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         }
 
+        android.support.constraint.ConstraintLayout constraintLayout = findViewById(R.id.container);
+        // constraintLayout.addView(new MateraView.Builder(this).setBackgroundColor("#FFFFFF").build(), new WindowManager.LayoutParams(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT));
+
+
+        new MateraView.Builder(this).setParentView(constraintLayout).build();
 
 
     }

@@ -6,13 +6,17 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.support.annotation.IntDef;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.arathus.matera.elements.CornerElement;
 import com.shopgun.android.materialcolorcreator.MaterialColorImpl;
 import com.shopgun.android.materialcolorcreator.Shade;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
@@ -40,6 +44,7 @@ public class MateraView extends View {
 
     private Paint paint;
     private String color;
+    private String backgroundColor;
     private boolean inverse;
 
     private int colorshade;
@@ -51,50 +56,29 @@ public class MateraView extends View {
     private ArrayList<Integer> cornerOrder;
 
 
-    public MateraView(Context context) {
+    private MateraView(Context context, int size, int numberOfLayers,
+                       int dropShadowRadius, String color,
+                       String backgroundColor, boolean inverse, int colorshade,
+                       boolean blackfilter, int filtervalue) {
         super(context);
+        this.size = size;
+        this.numberOfLayers = numberOfLayers;
+        this.dropShadowRadius = dropShadowRadius;
+        this.color = color;
+        this.backgroundColor = backgroundColor;
+        this.inverse = inverse;
+        this.colorshade = colorshade;
+        this.blackfilter = blackfilter;
+        this.filtervalue = filtervalue;
+        initializeVariables();
+
     }
 
     public MateraView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        initializeParameters(context, attrs);
+        initializeVariables();
 
-        TypedArray at = context.obtainStyledAttributes(attrs,
-                R.styleable.MateraView, 0, 0);
-
-        size = at.getInt(R.styleable.MateraView_elementSizes, 0);
-        numberOfLayers = at.getInt(R.styleable.MateraView_numberOfLayers, 2);
-        dropShadowRadius = at.getInt(R.styleable.MateraView_dropShadowSize, 8);
-        color = String.format("#%06X", (0xFFFFFF & at.getColor(R.styleable.MateraView_elementColor, Color.parseColor("#388E3C"))));
-        inverse = at.getBoolean(R.styleable.MateraView_inverseColors, false);
-        colorshade = at.getInt(R.styleable.MateraView_shadeOfColor, 5);
-        blackfilter = at.getBoolean(R.styleable.MateraView_blackFilter, false);
-        filtervalue = at.getInt(R.styleable.MateraView_filterValue, 0);
-
-        at.recycle();
-
-        elements = new ArrayList<>();
-
-        cornerOrder = new ArrayList<>();
-        cornerOrder.add(TOP_LEFT);
-        cornerOrder.add(TOP_RIGHT);
-        cornerOrder.add(BOTTOM_RIGHT);
-        cornerOrder.add(BOTTOM_LEFT);
-
-        paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paint.setShadowLayer(dropShadowRadius, 0, 0, Color.BLACK);
-        paint.setColor(Color.WHITE);
-        paint.setStyle(Paint.Style.FILL);
-        setLayerType(LAYER_TYPE_SOFTWARE, paint);
-
-        colorPalette = (inverse ? getInverseColorPalette(color) : getColorPalette(color));
-
-        if (dropShadowRadius < 0) {
-            dropShadowRadius = 0;
-        }
-
-        if (numberOfLayers < 0) {
-            numberOfLayers = 0;
-        }
     }
 
     public MateraView(Context context, AttributeSet attrs, int defStyle) {
@@ -113,16 +97,66 @@ public class MateraView extends View {
         return rand.nextInt((max - min) + 1) + min;
     }
 
-    @Override
-    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        super.onLayout(changed, left, top, right, bottom);
+    /**
+     * Read the necessary parameters to the view from the attributes, if they are available.
+     */
+    private void initializeParameters(Context context, AttributeSet attrs) {
 
+        TypedArray at = context.obtainStyledAttributes(attrs,
+                R.styleable.MateraView, 0, 0);
 
-        //Generate the values of the the triangle corners
-        generateValues(getMeasuredWidth(), getMeasuredHeight());
+        size = at.getInt(R.styleable.MateraView_elementSizes, 0);
+        numberOfLayers = at.getInt(R.styleable.MateraView_numberOfLayers, 2);
+        dropShadowRadius = at.getInt(R.styleable.MateraView_dropShadowSize, 8);
+        color = String.format("#%06X", (0xFFFFFF & at.getColor(R.styleable.MateraView_elementColor, Color.parseColor("#388E3C"))));
+        backgroundColor = String.format("#%06X", (0xFFFFFF & at.getColor(R.styleable.MateraView_backgroundColor, Color.parseColor("#000000"))));
+        inverse = at.getBoolean(R.styleable.MateraView_inverseColors, false);
+        colorshade = at.getInt(R.styleable.MateraView_shadeOfColor, 5);
+        blackfilter = at.getBoolean(R.styleable.MateraView_blackFilter, false);
+        filtervalue = at.getInt(R.styleable.MateraView_filterValue, 0);
+        at.recycle();
+
     }
 
-    private void generateValues(int viewWidth, int viewHeight) {
+    /**
+     * Initialize the necessary variables on the creation of the view.
+     */
+    private void initializeVariables() {
+
+        elements = new ArrayList<>();
+
+        cornerOrder = new ArrayList<>();
+        cornerOrder.add(TOP_LEFT);
+        cornerOrder.add(TOP_RIGHT);
+        cornerOrder.add(BOTTOM_RIGHT);
+        cornerOrder.add(BOTTOM_LEFT);
+
+        paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        paint.setShadowLayer(dropShadowRadius, 0, 0, Color.BLACK);
+        paint.setColor(Color.WHITE);
+        paint.setStyle(Paint.Style.FILL);
+        setLayerType(LAYER_TYPE_SOFTWARE, paint);
+
+        colorPalette = (inverse ? getInverseColorPalette(color) : getColorPalette(color));
+
+        if (!backgroundColor.equals("#000000")) {
+            colorPalette.set(0, Color.parseColor(backgroundColor));
+        }
+
+        if (dropShadowRadius < 0) {
+            dropShadowRadius = 0;
+        }
+
+        if (numberOfLayers < 0) {
+            numberOfLayers = 0;
+        }
+
+    }
+
+    /**
+     * Generates the values of the corner elements according to the preset parameters
+     */
+    private void generateCornersValues(int viewWidth, int viewHeight) {
 
         int min_width_value = 0;
         int max_width_value = 0;
@@ -130,7 +164,7 @@ public class MateraView extends View {
         int max_heigth_value = 0;
 
         for (Integer act_corn : cornerOrder) {
-            CornerElement actual = new CornerElement(act_corn);
+            CornerElement cornerElement = new CornerElement(act_corn);
             for (int i = 0; i < numberOfLayers; i++) {
 
                 switch (size) {
@@ -156,20 +190,29 @@ public class MateraView extends View {
                         max_heigth_value = Math.round(viewHeight);
                         break;
                 }
-
-                actual.addX(randInt(min_width_value, max_width_value));
-                actual.addY(randInt(min_height_value, max_heigth_value));
+                cornerElement.addX(randInt(min_width_value, max_width_value));
+                cornerElement.addY(randInt(min_height_value, max_heigth_value));
             }
-            actual.finalizeCornerElement(viewWidth, viewHeight);
-            elements.add(actual);
+            cornerElement.finalizeCornerElement(viewWidth, viewHeight);
+            elements.add(cornerElement);
         }
 
 
     }
 
     @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
+
+        //Generate the values of the the corners
+        generateCornersValues(getMeasuredWidth(), getMeasuredHeight());
+    }
+
+
+    @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+
 
         canvas.drawColor(colorPalette.get(0));
 
@@ -221,27 +264,159 @@ public class MateraView extends View {
         return cp;
     }
 
-    /*
+
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({UNDERSIZED, NORMAL, OVERSIZED})
     @interface LayerSizes {
     }
 
-    *//**
-     * Set the size of the material textures. Default value is NORMAL.
-     *
-     * @param size Can be one of the @{@link LayerSizes}
-     *             UNDERSIZED - the textures are smaller than the sizes of the view
-     *             NORMAL     - the textures may be as big as the view
-     *             OVERSIZED  - the textures could be bigger than the view
-     *//*
+    public static class Builder {
 
-    public void setSize(@LayerSizes int size) {
-        this.size = size;
-        this.invalidate();
-    }*/
+        private Context c;
+        private int size = 0;
+        private int numberOfLayers = 2;
+        private int dropShadowRadius = 8;
+
+        private String color = "#388E3C";
+        private String backgroundColor = "#000000";
+        private boolean inverse = false;
+
+        private int colorshade = 5;
+        private boolean blackfilter = false;
+        private int filtervalue = 0;
+
+        private ViewGroup parentView = null;
+
+        public Builder(Context c) {
+            this.c = c;
+        }
+
+        /**
+         * Set the size of the material textures. Default value is NORMAL.
+         * <p>
+         *
+         * @param size Can be one of the @{@link LayerSizes}
+         *             UNDERSIZED - the textures are smaller than the sizes of the view
+         *             NORMAL     - the textures may be as big as the view
+         *             OVERSIZED  - the textures could be bigger than the view
+         */
+
+        public Builder setElementsSize(@LayerSizes int size) {
+            this.size = size;
+            return this;
+        }
+
+        /**
+         * You can set here how many elements will be superposed.
+         * <p>
+         * (The best looking MateraViews for Matera Style, are between 2-5 layers) <p>
+         * Default is 2.
+         */
+        public Builder setNumberOfLayers(int numberOfLayers) {
+            this.numberOfLayers = numberOfLayers;
+            return this;
+        }
+
+        /**
+         * Set the size of the dropshadow. <p>
+         * By default is 8
+         */
+
+        public Builder setDropShadowRadius(int dropShadowRadius) {
+            this.dropShadowRadius = dropShadowRadius;
+            return this;
+        }
+
+        /**
+         * Add the main color to the MateraView. <p>
+         * By default is #388E3C
+         */
+
+        public Builder setColor(String color) {
+            this.color = color;
+            return this;
+
+        }
+
+        /**
+         * You can add here custom background color, if you want some special looking design. <p>
+         * By default the background color is the color you pick in setColor.
+         */
+
+        public Builder setBackgroundColor(String backgroundColor) {
+            this.backgroundColor = backgroundColor;
+            return this;
+        }
+
+        /**
+         * Here you can set where the MateraView will be placed.
+         * <p>
+         * IMPORTANT!!! If you do not set a parent view, the build() section will return with the MateraView you create with the builder.
+         * Otherwise the build() section returns with null.
+         */
+
+        public Builder setParentView(ViewGroup parentView) {
+            this.parentView = parentView;
+            return this;
+        }
 
 
+        /**
+         * Normally the darkest color is in the background and the lighter colors are in the foreground. <p>
+         * Here you can change it.
+         */
+
+        public Builder setInverse(boolean inverse) {
+            this.inverse = inverse;
+            return this;
+        }
+
+        /**
+         * Colorshade sets shade-difference between the layers. <p>
+         * Default is 5.
+         */
+
+        public Builder setColorShade(int colorshade) {
+            this.colorshade = colorshade;
+            return this;
+        }
+
+        /**
+         * Normally there is a light filter on the top of the view. You can set it here to black. <p>
+         * If you want to set it black/dark.
+         */
+
+        public Builder setBlackFilter(boolean blackfilter) {
+            this.blackfilter = blackfilter;
+            return this;
+        }
+
+
+        /**
+         * Normally there is a light filter on the top of the view. You can set it here to black. <p>
+         * If you want to set it black/dark.
+         */
+
+        public Builder setFilterValue(int filtervalue) {
+            this.filtervalue = filtervalue;
+            return this;
+        }
+
+
+        /**
+         * If you set ParentView, it adds the MateraView to it. <p>
+         * If you don't, it returns with the MateraView you created before.
+         */
+
+        public MateraView build() {
+            if (parentView == null) {
+                return new MateraView(c, size, numberOfLayers, dropShadowRadius, color, backgroundColor, inverse, colorshade, blackfilter, filtervalue);
+            } else {
+                parentView.addView(new MateraView(c, size, numberOfLayers, dropShadowRadius, color, backgroundColor, inverse, colorshade, blackfilter, filtervalue), 0);
+                return null;
+            }
+        }
+    }
 }
 
 

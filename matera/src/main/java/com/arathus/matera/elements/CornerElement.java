@@ -28,15 +28,6 @@ public class CornerElement {
 
     }
 
-
-    public ArrayList<Integer> getX_coordinates() {
-        return x_coordinates;
-    }
-
-    public ArrayList<Integer> getY_coordinates() {
-        return y_coordinates;
-    }
-
     public void addX(Integer i) {
         x_coordinates.add(i);
     }

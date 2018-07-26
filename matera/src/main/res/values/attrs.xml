@@ -16,6 +16,7 @@
         <attr name="blackFilter" format="boolean" />
         <attr name="filterValue" format="integer" />
         <attr name="shadeOfColor" format="integer" />
+        <attr name="backgroundColor" format="color" />
 
 
     </declare-styleable>
