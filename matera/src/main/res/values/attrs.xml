@@ -3,6 +3,15 @@
 
     <declare-styleable name="MateraView">
 
+        <attr name="materaStyle" format="enum">
+            <enum name="chaotic" value="0" />
+            <enum name="frame_strict" value="1" />
+            <enum name="frame_chaotic" value="2" />
+            <enum name="frame_regular" value="3" />
+            <enum name="integral_equal" value="4" />
+            <enum name="integral_strict" value="5" />
+        </attr>
+
         <attr name="elementSizes" format="enum">
             <enum name="undersized" value="-1" />
             <enum name="normal" value="0" />
@@ -17,6 +26,34 @@
         <attr name="filterValue" format="integer" />
         <attr name="shadeOfColor" format="integer" />
         <attr name="backgroundColor" format="color" />
+
+        <attr name="firstCornerToDraw" format="enum">
+            <enum name="TOP_LEFT" value="0" />
+            <enum name="TOP_RIGHT" value="1" />
+            <enum name="BOTTOM_RIGHT" value="2" />
+            <enum name="BOTTOM_LEFT" value="3" />
+        </attr>
+
+        <attr name="secondCornerToDraw" format="enum">
+            <enum name="TOP_LEFT" value="0" />
+            <enum name="TOP_RIGHT" value="1" />
+            <enum name="BOTTOM_RIGHT" value="2" />
+            <enum name="BOTTOM_LEFT" value="3" />
+        </attr>
+
+        <attr name="thirdCornerToDraw" format="enum">
+            <enum name="TOP_LEFT" value="0" />
+            <enum name="TOP_RIGHT" value="1" />
+            <enum name="BOTTOM_RIGHT" value="2" />
+            <enum name="BOTTOM_LEFT" value="3" />
+        </attr>
+
+        <attr name="fourthCornerToDraw" format="enum">
+            <enum name="TOP_LEFT" value="0" />
+            <enum name="TOP_RIGHT" value="1" />
+            <enum name="BOTTOM_RIGHT" value="2" />
+            <enum name="BOTTOM_LEFT" value="3" />
+        </attr>
 
 
     </declare-styleable>

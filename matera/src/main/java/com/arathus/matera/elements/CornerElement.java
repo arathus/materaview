@@ -32,6 +32,14 @@ public class CornerElement {
         x_coordinates.add(i);
     }
 
+    public ArrayList<Integer> getX_coordinates() {
+        return x_coordinates;
+    }
+
+    public ArrayList<Integer> getY_coordinates() {
+        return y_coordinates;
+    }
+
     public void addY(Integer i) {
         y_coordinates.add(i);
     }

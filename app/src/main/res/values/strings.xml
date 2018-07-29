@@ -1,12 +1,15 @@
 <resources>
+
     <string name="app_name">MateraExample</string>
-    <string name="login_page">Login page</string>
-    <string name="dialog_page">Dialog</string>
-    <string name="navigation_drawer_page">Navigation Drawer</string>
-    <string name="sign_up">Sign up</string>
-    <string name="password">Password</string>
-    <string name="e_mail">E-mail</string>
-    <string name="name">Name</string>
-    <string name="looks_cool">Looks cool ;)</string>
-    <string name="view_pager">View Pager</string>
+    <string name="simple">Simple usage</string>
+    <string name="advanced">Advanced usage</string>
+    <string name="advanced_code">Advanced usage from code</string>
+    <string name="title_activity_advanced_usage">AdvancedUsageActivity</string>
+
+    <string name="red">Red</string>
+    <string name="blue">Blue</string>
+    <string name="green">Green</string>
+
+
+
 </resources>

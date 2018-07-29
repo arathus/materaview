@@ -8,8 +8,6 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.arathus.matera.MateraView;
-
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -23,11 +21,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         android.support.constraint.ConstraintLayout constraintLayout = findViewById(R.id.container);
-        // constraintLayout.addView(new MateraView.Builder(this).setBackgroundColor("#FFFFFF").build(), new WindowManager.LayoutParams(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT));
-
-
-        new MateraView.Builder(this).setParentView(constraintLayout).build();
-
 
     }
 
@@ -36,10 +29,14 @@ public class MainActivity extends AppCompatActivity {
         switch (view.getId()) {
 
             case R.id.button1:
-                Intent i = new Intent(MainActivity.this, LoginPage.class);
+                Intent i = new Intent(MainActivity.this, SimpleActivity.class);
                 startActivity(i);
                 break;
 
+            case R.id.button2:
+                Intent i2 = new Intent(MainActivity.this, AdvancedUsageActivity.class);
+                startActivity(i2);
+                break;
         }
 
     }

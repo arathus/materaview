@@ -9,43 +9,48 @@
     android:orientation="horizontal"
     tools:context="com.arathus.materaexample.MainActivity">
 
-    <com.arathus.matera.MateraView
-        android:id="@+id/mtrview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:dropShadowSize="5"
-        app:elementColor="@color/colorSecond"
-        app:numberOfLayers="3"
-        app:shadeOfColor="5"/>
-
-    <Button
-        android:id="@+id/button1"
-        style="@style/Widget.AppCompat.Button.Borderless"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:enabled="true"
-        android:onClick="buttonClick"
-        android:padding="15dp"
-        android:text="@string/login_page"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <Button
-        android:id="@+id/button2"
-        style="@style/Widget.AppCompat.Button.Borderless"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:enabled="true"
-        android:onClick="buttonClick"
-        android:padding="15dp"
-        android:text="@string/view_pager"
-        app:layout_constraintTop_toBottomOf="@+id/button1"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
+        <Button
+            android:id="@+id/button1"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:enabled="true"
+            android:onClick="buttonClick"
+            android:padding="15dp"
+            android:text="@string/simple" />
 
+        <Button
+            android:id="@+id/button2"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:enabled="true"
+            android:onClick="buttonClick"
+            android:padding="15dp"
+            android:text="@string/advanced" />
+
+        <Button
+            android:id="@+id/button3"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:enabled="true"
+            android:onClick="buttonClick"
+            android:padding="15dp"
+            android:text="@string/advanced_code" />
+
+    </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>
