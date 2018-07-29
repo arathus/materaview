@@ -41,7 +41,6 @@ public class CustomPagerAdapter extends PagerAdapter {
     @Override
     public CharSequence getPageTitle(int position) {
         ModelObject customPagerEnum = ModelObject.values()[position];
-
         return mContext.getString(customPagerEnum.getTitleResId());
     }
 
