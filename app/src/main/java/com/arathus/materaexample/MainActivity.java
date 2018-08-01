@@ -36,6 +36,11 @@ public class MainActivity extends AppCompatActivity {
                 Intent i2 = new Intent(MainActivity.this, AdvancedUsageActivity.class);
                 startActivity(i2);
                 break;
+
+            case R.id.button3:
+                Intent i3 = new Intent(MainActivity.this, AdvancedCodeActivity.class);
+                startActivity(i3);
+                break;
         }
 
     }

@@ -9,7 +9,12 @@
     <string name="red">Red</string>
     <string name="blue">Blue</string>
     <string name="green">Green</string>
-
-
+    <string name="tutorial_backgrounds">MateraView is ideal for tutorial backgrounds…</string>
+    <string name="password">Password</string>
+    <string name="first_view">First View</string>
+    <string name="email">E-mail</string>
+    <string name="name">Name</string>
+    <string name="for_login_screens">…for login screens.</string>
+    <string name="give_us_a_star">If you like MateraView give us a star ;)</string>
 
 </resources>

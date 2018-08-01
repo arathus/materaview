@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context="com.arathus.materaexample.SimpleActivity">
+
+    <com.arathus.matera.MateraView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:elementColor="@color/colorThird"
+        app:firstCornerToDraw="TOP_LEFT"
+        app:materaStyle="frame_regular"
+        app:numberOfLayers="4"
+        app:secondCornerToDraw="BOTTOM_RIGHT" />
+
+
+</android.support.constraint.ConstraintLayout>

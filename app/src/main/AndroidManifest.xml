@@ -17,10 +17,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".SimpleActivity" />
-        <activity
-            android:name=".AdvancedUsageActivity"
-            android:label="@string/title_activity_advanced_usage"
-            android:theme="@style/AppTheme"></activity>
+        <activity android:name=".AdvancedUsageActivity" />
+        <activity android:name=".AdvancedCodeActivity" />
+
     </application>
 
 </manifest>
