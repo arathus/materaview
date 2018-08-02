@@ -1,4 +1,5 @@
 # MateraView  (v0.1)
+[![Release](https://jitpack.io/v/arathus/MateraView.svg)](https://jitpack.io/#arathus/materaview)
 ![MateraView is a flexible, easy to use, all in one design library for your android project.](https://github.com/arathus/materaview/blob/master/gfx/banner.png)
 #### Do you want your **app look stylish**, but you are not a designer ? Or just don't want to spend hours of creating **Material designed backgrounds**? Do you need **flexibility**, and also want a **simple and easy** to understand design library? MateraView was designed to solve these problems!
 
