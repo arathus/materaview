@@ -2,20 +2,41 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
+    android:weightSum="4"
     tools:context="com.arathus.materaexample.SimpleActivity">
 
-    <com.arathus.matera.MateraView
+    <LinearLayout
+        android:id="@+id/container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:elementColor="@color/colorThird"
-        app:firstCornerToDraw="TOP_LEFT"
-        app:materaStyle="frame_regular"
-        app:numberOfLayers="4"
-        app:secondCornerToDraw="BOTTOM_RIGHT" />
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/bottomview"
+        app:layout_constraintHorizontal_weight="3"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/bottomview"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/colorThird"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_weight="6"
+        app:layout_constraintTop_toBottomOf="@+id/container">
+
+        <TextView
+            style="@style/TextAppearance.AppCompat.Body1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="7dp"
+            android:text="@string/lorem_ipsum" />
+
+    </LinearLayout>
 
 
 </android.support.constraint.ConstraintLayout>

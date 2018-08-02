@@ -415,7 +415,7 @@ public class MateraView extends View {
     }
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({CHAOTIC, FRAME_CHAOTIC, FRAME_REGULAR, INTEGRAL_EQUAL, INTEGRAL_STRICT})
+    @IntDef({CHAOTIC, FRAME_STRICT, FRAME_CHAOTIC, FRAME_REGULAR, INTEGRAL_EQUAL, INTEGRAL_STRICT})
     @interface MateraStyles {
     }
 
